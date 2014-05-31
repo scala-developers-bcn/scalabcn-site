@@ -30,16 +30,16 @@ class TwitterConsumerActor(broadcastActorRef: ActorRef) extends Actor {
               }
               case _ => None
             }
-          }.flatten
+          }.flatten.distinct
 
           broadcastActorRef ! BroadcastActor.Publish(
-            JsObject(List(("images", JsArray.apply(x))))
+              JsObject(List(("images", JsArray.apply(x))))
           )
           val msgs: Seq[JsValue] = arr.value.take(5).map {
             _ \ "text"
           }
           broadcastActorRef ! BroadcastActor.Publish(
-            JsObject(List(("twits", JsArray.apply(msgs))))
+              JsObject(List(("twits", JsArray.apply(msgs))))
           )
       }
 
