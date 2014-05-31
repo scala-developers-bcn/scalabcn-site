@@ -25,19 +25,11 @@
         <script type="text/javascript">
             var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
             
-            var wsNextEvents = new WS("@routes.Application.wsNextEvents().webSocketURL()")
-            var receiveNextEvents = function(event) {
-                document.getElementById("next_content").innerHTML = event.data;
+            var ws = new WS("@routes.Application.ws().webSocketURL()")
+            var handleMessage = function(message) {
+                document.getElementById("event_content").innerHTML = message.data;
             }
-            wsNextEvents.onmessage = receiveNextEvents
-            
-            var wsEvents = new WS("@routes.Application.wsEvents().webSocketURL()")
-            var receiveEvents = function(event) {
-                document.getElementById("event_content").innerHTML = event.data;
-            }
-            wsEvents.onmessage = receiveEvents
-
-
+            ws.onmessage = handleMessage
         </script>
         <div id="left_div">
         	<h2>Next</h2>
