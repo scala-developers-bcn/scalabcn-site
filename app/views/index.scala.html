@@ -74,7 +74,7 @@
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit">
-        <h1 id="last_event_title">Hello, world!</h1>
+        <h2 id="last_event_title">Hello, world!</h1>
         <p id="last_event_description">This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
         <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
       </div>
@@ -82,13 +82,14 @@
       <!-- Example row of columns -->
       <div class="row">
         <div class="span8">
-          <h2>Related Tweets</h2>
-          <p id="last_event_tweets">Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <h3>Related Tweets</h2>
+          <p id="related_tweets_text">Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
           <p><a class="btn" href="#">View details &raquo;</a></p>
         </div>
         <div class="span4">
-          <h2 id="next_event_title">Other</h2>
-          <p id="next_event_description">Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          <h3 id="next_event_title">Other</h2>
+          <p id="next_event_description"></p>
+          <p>RSVP: <span id="next_event_rsvp"></span></p>
           <p><a class="btn" href="#">View details &raquo;</a></p>
         </div>
       </div>
@@ -107,16 +108,25 @@
     <script src="assets/javascripts/jquery-1.9.0.min.js"></script>
     <script src="assets/javascripts/bootstrap.min.js"></script>
 	<script type="text/javascript">
+	
+		function toDateString(ts) {
+			var date = new Date(ts);
+			return date.toDateString();
+		}
+	
         var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket        
         var applicationWS = new WS("@routes.Application.ws().webSocketURL()")
         var handleMessage = function(message) {
         	var jsObject = JSON.parse(message.data);
         	if(jsObject["last-event"]) {
-        		$("#last_event_title").empty().append(jsObject["last-event"].name);
+        		$("#last_event_title").empty().append(toDateString(jsObject["last-event"].time));
+        		$("#last_event_description").empty().append(jsObject["last-event"].name);
         	} else if(jsObject["next-event"]) {
-        		$("#next_event_title").empty().append(jsObject["next-event"].name);
+        		$("#next_event_title").empty().append(toDateString(jsObject["next-event"].event.time));
+        		$("#next_event_description").empty().append(jsObject["next-event"].event.name);
+        		$("#next_event_rsvp").empty().append(jsObject["next-event"].event.rsvpCount);
         	} else if(jsObject["msgs"]) {
-        		$("#last_event_tweets").empty().append(jsObject["msgs"]);
+        		$("#related_tweets_text").empty().append(jsObject["msgs"]);
         	} else {
         		alert("Unknown data: " + JSON.stringify(message.data));
         	}
