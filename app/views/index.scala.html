@@ -81,16 +81,11 @@
 
       <!-- Example row of columns -->
       <div class="row">
-        <div class="span4">
+        <div class="span8">
           <h2>Heading</h2>
           <p id="main_content">Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
           <p><a class="btn" href="#">View details &raquo;</a></p>
         </div>
-        <div class="span4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-       </div>
         <div class="span4">
           <h2>Heading</h2>
           <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
@@ -111,13 +106,13 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="assets/javascripts/jquery-1.9.0.min.js"></script>
     <script src="assets/javascripts/bootstrap.min.js"></script>
-    <script type="text/javascript">
-		var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket        
+	<script type="text/javascript">
+        var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket        
         var applicationWS = new WS("@routes.Application.ws().webSocketURL()")
         var handleMessage = function(message) {
         	document.getElementById("main_content").innerHTML = message.data;
         }
-   		applicationWS.onmessage = handleMessage;
+        applicationWS.onmessage = handleMessage;
     </script>
   </body>
 </html>
