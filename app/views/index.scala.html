@@ -78,6 +78,11 @@
         <p id="last_event_description">This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
         <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
       </div>
+      
+      <div class="row">
+        <div class="span12" id="twitter_images">
+        </div>
+      </div>
 
       <!-- Example row of columns -->
       <div class="row">
@@ -132,6 +137,12 @@
         			$("#related_tweets_text").append("<li>" + msg + "</li>");	
         		});
         		$("#related_tweets_text").append("</ul>");
+        	} else if(jsObject["images"]) {
+        		$("#twitter_images").empty();
+        		var images = jsObject["images"];
+        		images.forEach(function(image) {
+        			$("#twitter_images").append("<img src='" + image + "'/>");	
+        		});
         	} else {
         		console.log("Unknown data: " + JSON.stringify(message.data));
         	}
