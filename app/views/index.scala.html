@@ -7,23 +7,46 @@
         <title>Some Title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <style type="text/css">
+        	#left_div {
+        		background-color: #F0F0F0;
+        		height: 800px;
+        		width: 30%;
+        		float: right;
+        	}
+            #right_div {
+            	background-color: #F0F0F0;
+            	height: 800px;
+            	width: 65%;
+            }
+        </style>
     </head>
     <body >
         <script type="text/javascript">
             var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
-            var dateSocket = new WS("@routes.Application.ws().webSocketURL()")
-            var receiveEvent = function(event) {
-                document.getElementById("randomVal").innerHTML = event.data;
+            
+            var wsNextEvents = new WS("@routes.Application.wsNextEvents().webSocketURL()")
+            var receiveNextEvents = function(event) {
+                document.getElementById("next_content").innerHTML = event.data;
             }
-            dateSocket.onmessage = receiveEvent
+            wsNextEvents.onmessage = receiveNextEvents
+            
+            var wsEvents = new WS("@routes.Application.wsEvents().webSocketURL()")
+            var receiveEvents = function(event) {
+                document.getElementById("event_content").innerHTML = event.data;
+            }
+            wsEvents.onmessage = receiveEvents
 
 
         </script>
-        <center>
-
-        <h1>The random number of the day</h1>
-        <div id="randomVal" ></h1>
-        </center>
+        <div id="left_div">
+        	<h2>Next</h2>
+        	<p id="next_content"></p>
+        </div>
+        <div id="right_div">
+        	<h2 id="event_date">31 May 2014</h2>
+        	<p id="event_content"></p>
+        </div>
     </body>
 
 </html>

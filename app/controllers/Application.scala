@@ -19,7 +19,7 @@ object Application extends Controller {
   val broadcastActor = Akka.system.actorOf(Props(classOf[BroadcastActor]))
   val twitterConsumerActor = Akka.system.actorOf(Props(classOf[TwitterConsumerActor], broadcastActor))
 
-  def ws = WebSocket.using[String] { request =>
+  def wsEvents = WebSocket.using[String] { request =>
 
     val broadcast: (Enumerator[String], Concurrent.Channel[String]) = Concurrent.broadcast[String]
     broadcastActor ! BroadcastActor.Subscribe(broadcast._2)
@@ -30,5 +30,7 @@ object Application extends Controller {
     }
     (in, out)
   }
+  
+  def wsNextEvents = wsEvents
 
 }
