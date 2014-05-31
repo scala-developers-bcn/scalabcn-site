@@ -46,13 +46,11 @@ object TwitterConsumer {
 
   def observable(topic: String, amount: Int):Observable[QueryTopicResponse] = {
     val twitterConsumer = new TwitterConsumer
-    Observable.timer(0 seconds, 30 seconds).map(t => twitterConsumer.queryTopic(topic, amount))
+    Observable.timer(0 seconds, 5 minute).map(t => twitterConsumer.queryTopic(topic, amount))
   }
 
   def main(args: Array[String]): Unit = {
-    //Create an observable on a specific topic
-    val o = TwitterConsumer.observable("scalabcn", 5)
-    val subscription = o.subscribe((resp) => println(resp), (e) => println(e))
-    Thread.sleep(20000);
+    val consumer = new TwitterConsumer();
+    println(consumer.queryTopic("scalabcn", 50).content);
   }
 }
