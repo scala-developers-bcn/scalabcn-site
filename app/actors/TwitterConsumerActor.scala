@@ -6,12 +6,6 @@ import consumers.TwitterConsumer
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsString
 
-case class Statuses(statuses: List[String])
-
-object TwitterProtocol {
-  implicit def StatusesFormat = Json.format[Statuses]
-
-}
 
 class TwitterConsumerActor(broadcastActorRef: ActorRef) extends Actor {
   private val scalaBcnObservable = TwitterConsumer.observable("scalabcn", 50);
@@ -19,31 +13,11 @@ class TwitterConsumerActor(broadcastActorRef: ActorRef) extends Actor {
     (response) => {
       val status = response.statusCode
       println(s"TwitterConsumerActor: performed request ($status)")
-      import TwitterProtocol._
-
-      (Json.parse(response.content) \ "statuses") match {
-        case arr: JsArray =>
-          val x = arr.value.flatMap { s =>
-            (s \ "entities" \ "media") match {
-              case m: JsArray => m.value.map { e =>
-                Some((e \ "media_url"))
-              }
-              case _ => None
-            }
-          }.flatten.distinct
-
-          broadcastActorRef ! BroadcastActor.Publish(
-              JsObject(List(("images", JsArray.apply(x))))
-          )
-          val msgs: Seq[JsValue] = arr.value.take(5).map {
-            _ \ "text"
-          }
-          broadcastActorRef ! BroadcastActor.Publish(
-              JsObject(List(("twits", JsArray.apply(msgs))))
-          )
-      }
-
-
+      if(status == 200) {
+    	  val (texts, images) = TwitterConsumer.toTextsAndImages(response.content)
+    	  broadcastActorRef ! BroadcastActor.Publish(texts)
+          broadcastActorRef ! BroadcastActor.Publish(images)
+      } 
     },
     (error) => System.err.println(s"TwitterConsumerActor: $error"),
     () => println(s"TwitterConsumerActor: scala bcn observable completed")

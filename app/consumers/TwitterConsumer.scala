@@ -1,6 +1,7 @@
 package consumers
 
 import rx.lang.scala._
+import play.api.libs.json._
 import rx.lang.scala.schedulers._
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.DurationInt
@@ -18,6 +19,8 @@ import scala.util.Success
 import scala.util.Failure
 import scala.concurrent.{Future, ExecutionContext}
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.json.JsObject
+import play.api.libs.json.JsString
 
 case class QueryTopicResponse(topic: String, statusCode: Int, content: String)
 
@@ -42,11 +45,40 @@ class TwitterConsumer {
   }
 }
 
+case class Statuses(statuses: List[String])
+
+object TwitterProtocol {
+  implicit def StatusesFormat = Json.format[Statuses]
+}
+
 object TwitterConsumer {
 
   def observable(topic: String, amount: Int):Observable[QueryTopicResponse] = {
     val twitterConsumer = new TwitterConsumer
     Observable.timer(0 seconds, 5 minute).map(t => twitterConsumer.queryTopic(topic, amount))
+  }
+  
+  def toTextsAndImages(content: String, maxTweets: Int = 10, maxImages: Int = 5) = {
+	  (Json.parse(content) \ "statuses") match {
+        case arr: JsArray =>
+          val x = arr.value.flatMap { s =>
+            (s \ "entities" \ "media") match {
+              case m: JsArray => m.value.map { e =>
+                Some((e \ "media_url"))
+              }
+              case _ => None
+            }
+          }.flatten.distinct.take(maxImages)
+    
+         
+          val msgs: Seq[JsValue] = arr.value.map {
+            _ \ "text"
+          }.take(maxTweets)
+ 
+          (JsObject(List(("twits", JsArray.apply(msgs)))), JsObject(List(("images", JsArray.apply(x)))))
+          
+        case _ => (JsObject(Nil), JsObject(Nil))
+      }
   }
 
   def main(args: Array[String]): Unit = {
