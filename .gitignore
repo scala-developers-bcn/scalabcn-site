@@ -2,7 +2,8 @@
 *.log
 
 # sbt specific
-.cache/
+.target/
+.cache
 .history/
 .lib/
 dist/*
