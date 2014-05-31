@@ -17,6 +17,10 @@
         padding-top: 60px;
         padding-bottom: 40px;
       }
+      .tweet_thumbnail {
+        height: 100px;
+        margin: 10px;
+      }
     </style>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -141,7 +145,7 @@
         		$("#twitter_images").empty();
         		var images = jsObject["images"];
         		images.forEach(function(image) {
-        			$("#twitter_images").append("<img src='" + image + "'/>");	
+        			$("#twitter_images").append("<img class='tweet_thumbnail' src='" + image + "'/>");	
         		});
         	} else {
         		console.log("Unknown data: " + JSON.stringify(message.data));
