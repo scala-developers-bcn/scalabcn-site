@@ -13,12 +13,17 @@
             var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
             var dateSocket = new WS("@routes.Application.ws().webSocketURL()")
             var receiveEvent = function(event) {
-                alert("Last ping: "+event.data);
+                document.getElementById("randomVal").innerHTML = event.data;
             }
             dateSocket.onmessage = receiveEvent
 
+
         </script>
-        Hola!
+        <center>
+
+        <h1>The random number of the day</h1>
+        <div id="randomVal" ></h1>
+        </center>
     </body>
 
 </html>
