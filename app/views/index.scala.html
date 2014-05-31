@@ -27,7 +27,7 @@
             
             var wsNextEvents = new WS("@routes.Application.wsNextEvents().webSocketURL()")
             var receiveNextEvents = function(event) {
-                document.getElementById("next_content").innerHTML = event.data;
+                document.getElementById("next_content").innerHTML += "<br>"+ event.data;
             }
             wsNextEvents.onmessage = receiveNextEvents
             
