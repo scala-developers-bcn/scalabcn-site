@@ -1,17 +1,14 @@
 package actors
 
-import play.api.libs.json.{JsObject, JsString, JsResult, Json}
+import play.api.libs.json._
 import akka.actor.{Actor, ActorRef}
 import consumers.TwitterConsumer
+import play.api.libs.json.JsObject
+import play.api.libs.json.JsString
 
-case class Status(text: String)
-
-case class Statuses(statuses: List[Status])
+case class Statuses(statuses: List[String])
 
 object TwitterProtocol {
-
-  implicit def StatusFormat = Json.format[Status]
-
   implicit def StatusesFormat = Json.format[Statuses]
 
 }
@@ -24,18 +21,12 @@ class TwitterConsumerActor(broadcastActorRef: ActorRef) extends Actor {
       println(s"TwitterConsumerActor: performed request ($status)")
       import TwitterProtocol._
 
-      val jsResult: JsResult[Statuses] = Json.fromJson[Statuses](
-        Json.parse(response.content)
+      val msgs:Seq[JsValue] = (Json.parse(response.content) \ "statuses" \\ "text")
+
+      broadcastActorRef ! BroadcastActor.Publish(
+        JsObject(List(("twits", JsArray.apply(msgs))))
       )
 
-      jsResult map { statuses =>
-        val humanReadableMessages: String = statuses.statuses.map {
-          _.text
-        }.mkString("<br/>")
-        broadcastActorRef ! BroadcastActor.Publish(
-          JsObject(List(("msgs", JsString(humanReadableMessages))))
-        )
-      }
 
     },
     (error) => System.err.println(s"TwitterConsumerActor: $error"),
