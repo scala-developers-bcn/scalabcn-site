@@ -1,6 +1,6 @@
 *.class
 *.log
-
+env.sh
 # sbt specific
 .target/
 .cache
