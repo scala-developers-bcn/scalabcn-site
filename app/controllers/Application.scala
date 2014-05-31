@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.iteratee.{Enumerator, Iteratee}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Random
 
 object Application extends Controller {
 
@@ -21,7 +22,7 @@ object Application extends Controller {
     }
 
     // Send a single 'Hello!' message
-    val out = Enumerator("Hello! 123")
+    val out = Enumerator(""  + Random.nextInt())
 
     (in, out)
   }
