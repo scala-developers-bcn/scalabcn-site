@@ -7,9 +7,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Application extends Controller {
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+
+  def index = Action { implicit request =>
+    Ok(views.html.index())
   }
+
 
   def ws = WebSocket.using[String] { request =>
 
@@ -19,7 +21,7 @@ object Application extends Controller {
     }
 
     // Send a single 'Hello!' message
-    val out = Enumerator("Hello!")
+    val out = Enumerator("Hello! 123")
 
     (in, out)
   }
