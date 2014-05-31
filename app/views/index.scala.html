@@ -124,7 +124,7 @@
         	} else if(jsObject["next-event"]) {
         		$("#next_event_title").empty().append(toDateString(jsObject["next-event"].event.time));
         		$("#next_event_description").empty().append(jsObject["next-event"].event.name);
-        		$("#next_event_rsvp").empty().append(jsObject["next-event"].event.rsvpCount);
+        		$("#next_event_rsvp").empty().append(jsObject["next-event"].rsvpCount);
         	} else if(jsObject["msgs"]) {
         		$("#related_tweets_text").empty().append(jsObject["msgs"]);
         	} else {
