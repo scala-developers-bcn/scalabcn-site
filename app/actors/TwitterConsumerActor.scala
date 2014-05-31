@@ -21,7 +21,8 @@ class TwitterConsumerActor(broadcastActorRef: ActorRef) extends Actor {
       println(s"TwitterConsumerActor: performed request ($status)")
       import TwitterProtocol._
 
-      val msgs:Seq[JsValue] = (Json.parse(response.content) \ "statuses" \\ "text")
+      val arr:JsArray = (Json.parse(response.content) \ "statuses").asInstanceOf[JsArray]
+      val msgs:Seq[JsValue] = arr.value.map{ _ \ "text"}
 
       broadcastActorRef ! BroadcastActor.Publish(
         JsObject(List(("twits", JsArray.apply(msgs))))
