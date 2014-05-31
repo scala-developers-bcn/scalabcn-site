@@ -1,0 +1,19 @@
+
+{"last-event”: {
+  "id":"178764742”,
+   "time":1400774400000,
+   "name":"Building Reactive Applications with Akka (by Jonas Bonér)”
+  }
+}
+
+{"next-event”:
+  {
+         "event”:{
+    "id":"184920542”,
+    "time":1401987600000,
+    "name":"Scala Testing with Scalatest”
+    },
+   "rsvpCount”:19
+         }
+}
+

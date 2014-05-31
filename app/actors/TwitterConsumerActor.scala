@@ -1,6 +1,6 @@
 package actors
 
-import play.api.libs.json.{JsResult, Json}
+import play.api.libs.json.{JsObject, JsString, JsResult, Json}
 import akka.actor.{Actor, ActorRef}
 import consumers.TwitterConsumer
 
@@ -32,7 +32,9 @@ class TwitterConsumerActor(broadcastActorRef: ActorRef) extends Actor {
         val humanReadableMessages: String = statuses.statuses.map {
           _.text
         }.mkString("<br/>")
-        broadcastActorRef ! BroadcastActor.Publish(humanReadableMessages)
+        broadcastActorRef ! BroadcastActor.Publish(
+          JsObject(List(("msgs", JsString(humanReadableMessages))))
+        )
       }
 
     },
