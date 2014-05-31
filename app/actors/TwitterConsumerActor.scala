@@ -14,19 +14,34 @@ object TwitterProtocol {
 }
 
 class TwitterConsumerActor(broadcastActorRef: ActorRef) extends Actor {
-  private val scalaBcnObservable = TwitterConsumer.observable("scalabcn", 5);
+  private val scalaBcnObservable = TwitterConsumer.observable("scalabcn", 50);
   scalaBcnObservable.subscribe(
     (response) => {
       val status = response.statusCode
       println(s"TwitterConsumerActor: performed request ($status)")
       import TwitterProtocol._
 
-      val arr:JsArray = (Json.parse(response.content) \ "statuses").asInstanceOf[JsArray]
-      val msgs:Seq[JsValue] = arr.value.map{ _ \ "text"}
+      (Json.parse(response.content) \ "statuses") match {
+        case arr: JsArray =>
+          val x = arr.value.flatMap { s =>
+            (s \ "entities" \ "media") match {
+              case m: JsArray => m.value.map { e =>
+                Some((e \ "media_url"))
+              }
+              case _ => None
+            }
+          }.flatten
 
-      broadcastActorRef ! BroadcastActor.Publish(
-        JsObject(List(("twits", JsArray.apply(msgs))))
-      )
+          broadcastActorRef ! BroadcastActor.Publish(
+            JsObject(List(("images", JsArray.apply(x))))
+          )
+          val msgs: Seq[JsValue] = arr.value.take(5).map {
+            _ \ "text"
+          }
+          broadcastActorRef ! BroadcastActor.Publish(
+            JsObject(List(("twits", JsArray.apply(msgs))))
+          )
+      }
 
 
     },
