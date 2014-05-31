@@ -125,10 +125,15 @@
         		$("#next_event_title").empty().append(toDateString(jsObject["next-event"].event.time));
         		$("#next_event_description").empty().append(jsObject["next-event"].event.name);
         		$("#next_event_rsvp").empty().append(jsObject["next-event"].rsvpCount);
-        	} else if(jsObject["msgs"]) {
-        		$("#related_tweets_text").empty().append(jsObject["msgs"]);
+        	} else if(jsObject["twits"]) {
+        		$("#related_tweets_text").empty().append("<ul>");
+        		var msgs = jsObject["twits"];
+        		msgs.forEach(function(msg) {
+        			$("#related_tweets_text").append("<li>" + msg + "</li>");	
+        		});
+        		$("#related_tweets_text").append("</ul>");
         	} else {
-        		alert("Unknown data: " + JSON.stringify(message.data));
+        		console.log("Unknown data: " + JSON.stringify(message.data));
         	}
         }
         applicationWS.onmessage = handleMessage;
