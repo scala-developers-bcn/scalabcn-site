@@ -3,7 +3,7 @@ scalabcn-site
 
 Source code for the UG site. This was first created during the Scaladays Hack Weekend organized by the Scala User Group - Berlin Brandenburg (http://www.meetup.com/Scala-Berlin-Brandenburg/events/182906492/).
 
-This is work in progress.
+This is work in progress, please check issues section if you want to help or have suggestions on improvements.
 
 
 Running the code
