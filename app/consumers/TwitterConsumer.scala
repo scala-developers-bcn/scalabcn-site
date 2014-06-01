@@ -55,7 +55,7 @@ object TwitterConsumer {
 
   def observable(topic: String, amount: Int):Observable[QueryTopicResponse] = {
     val twitterConsumer = new TwitterConsumer
-    Observable.timer(0 seconds, 5 minute).map(t => twitterConsumer.queryTopic(topic, amount))
+    Observable.timer(0 seconds, 5 seconds).map(t => twitterConsumer.queryTopic(topic, amount))
   }
   
   def toTextsAndImages(content: String, maxTweets: Int = 10, maxImages: Int = 5) = {
