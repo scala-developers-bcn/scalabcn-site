@@ -12,12 +12,17 @@ import actors.{TwitterConsumerActor, BroadcastActor}
 object Application extends Controller {
   def index = Action {
     implicit request =>
+      // causing a refresh on every 'index' hit is not a very good idea. Needs review.
       broadcastActor ! BroadcastActor.Refresh
       Ok(views.html.index())
   }
 
   val broadcastActor = Akka.system.actorOf(Props(classOf[BroadcastActor]))
+
+  // should twitter consumer actor be moved inside broadcast? That way AppController
+  // would only know of the broadcast and data/APIs should all be hidden behind Broadcast Facade.
   val twitterConsumerActor = Akka.system.actorOf(Props(classOf[TwitterConsumerActor], broadcastActor))
+
 
   def ws = WebSocket.using[String] { request =>
 

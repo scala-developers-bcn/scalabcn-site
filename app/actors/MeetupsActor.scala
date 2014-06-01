@@ -20,6 +20,9 @@ object MeetupsProtocol {
 }
 
 
+/**
+ * Some case xxx items to communicate with the family of Meetup Actors
+ */
 object MeetupsActor {
 
   case object Refresh
@@ -32,6 +35,9 @@ object MeetupsActor {
 
 }
 
+/**
+ * Will obtain RSVP data for the provided MeetupEvent.
+ */
 class MeetupsRsvpActor extends Actor {
   override def receive: Actor.Receive = {
     case MeetupsActor.RequestRSVP(e) =>
@@ -55,16 +61,22 @@ class MeetupsRsvpActor extends Actor {
 }
 
 
+/**
+ * Will gather last and next MeetupEvent. Note that 'last event' is the last event happening
+ * in the time-range (2 months ago, tomorrow). So if your meetup had no activity in the
+ * last 2 months there's no 'last event'. Also, if you are hosting an event tomorrow (or
+ * this afternoon) that'd be considered the 'last event already'.
+ */
 class MeetupsActor extends Actor {
 
   val rsvpActor = context.system.actorOf(Props(classOf[MeetupsRsvpActor]))
-
 
   override def receive: Receive = {
     case MeetupsActor.Refresh => {
 
       val broadcast = sender
 
+      // TODO group_id should be configurable.
       val f: Future[Response] = WS.url("http://api.meetup.com/2/events.json?status=past,upcoming" +
         "&group_id=3505122" +
         "&time=-2m,2m" +

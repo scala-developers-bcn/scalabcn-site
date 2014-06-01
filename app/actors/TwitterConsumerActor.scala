@@ -8,6 +8,7 @@ import play.api.libs.json.JsString
 
 
 class TwitterConsumerActor(broadcastActorRef: ActorRef) extends Actor {
+  //  TODO 'scalabcn' should be configurable.
   private val scalaBcnObservable = TwitterConsumer.observable("scalabcn", 50);
   scalaBcnObservable.subscribe(
     (response) => {

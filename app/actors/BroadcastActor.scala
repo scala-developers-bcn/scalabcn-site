@@ -4,12 +4,17 @@ import play.api.libs.iteratee.Concurrent
 import akka.actor.{Props, Actor}
 import play.api.libs.json._
 
+/**
+ * some case xxx to communicate with Broadcast Actor Family
+ */
 object BroadcastActor {
 
   case class Subscribe(endpoint: Concurrent.Channel[String])
 
+  /** Publish JsValue transparently to all subscribed Channels */
   case class Publish(json: JsValue)
 
+  /** Request refresh of data from APIs */
   case object Refresh
 
 }
@@ -27,6 +32,7 @@ class BroadcastActor extends Actor {
     }
     case BroadcastActor.Refresh => {
       eventsActor ! MeetupsActor.Refresh
+      // twitter API is not refreshed since that could cause twitter quota excess.
     }
   }
 }

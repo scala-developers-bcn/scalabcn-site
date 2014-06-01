@@ -53,6 +53,14 @@ object TwitterProtocol {
 
 object TwitterConsumer {
 
+  /**
+   * Builds an Rx Observable that'll return <code>amount</code> tweets when searching for the <code>topic</code>. Note
+   * that twitter Search API will pre-filter data date range (now() - 7 day , now()).
+   *
+   * @param topic
+   * @param amount
+   * @return
+   */
   def observable(topic: String, amount: Int):Observable[QueryTopicResponse] = {
     val twitterConsumer = new TwitterConsumer
     Observable.timer(0 seconds, 5 minutes).map(t => twitterConsumer.queryTopic(topic, amount))
@@ -81,6 +89,10 @@ object TwitterConsumer {
       }
   }
 
+  /**
+   * helper main method to quickly test the consumer. This should be moved to test/ folder.
+   * @param args
+   */
   def main(args: Array[String]): Unit = {
     val consumer = new TwitterConsumer();
     println(consumer.queryTopic("scalabcn", 50).content);
