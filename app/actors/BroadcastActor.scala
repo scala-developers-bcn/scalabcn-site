@@ -37,27 +37,22 @@ class BroadcastActor extends Actor with akka.actor.ActorLogging{
 
   override def receive: Receive = {
     case BroadcastActor.Subscribe(endpoint) => endpoints = endpoint :: endpoints
-    case BroadcastActor.Publish(key, json) => updatePublication(key, json, pushPublicationsToEndpoints)
+    case BroadcastActor.Publish(key, json) => updatePublication(key, json, pushContentToEndpoints)
     case BroadcastActor.ClientConnection => pushPublicationsToEndpoints
   }
 
-  def updatePublication(key: String, json: JsValue, callback: () => Unit) = {
-    cachedPublications = cachedPublications + (key -> Json.stringify(json))
-    callback()
+  def updatePublication(key: String, json: JsValue, onUpdate: (String) => Unit) = {
+    val jsonContent = Json.stringify(json)
+    cachedPublications = cachedPublications + (key -> jsonContent)
+    onUpdate(jsonContent)
+  }
+
+  def pushContentToEndpoints(jsonContent: String) = {
+    endpoints.foreach (_.push(jsonContent))
   }
 
   def pushPublicationsToEndpoints() = {
-    cachedPublications.values.foreach(jsonContent => {
-      endpoints.foreach ( e => {
-        try {
-          e.push(jsonContent)
-        } catch {
-          case t: Throwable => {
-            log.error(s"Unable to push content: $t")
-          }
-        }
-      })
-    })
+    cachedPublications.values.foreach(pushContentToEndpoints)
   }
 
   def triggerPublicationsRefresh() = {
