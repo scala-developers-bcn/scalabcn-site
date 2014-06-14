@@ -8,9 +8,8 @@ import play.api.libs.json.JsString
 
 
 class TwitterConsumerActor(broadcastActorRef: ActorRef) extends Actor with akka.actor.ActorLogging {
-  //  TODO 'scalabcn' should be configurable.
-  private val scalaBcnObservable = TwitterConsumer.observable("scalabcn", 50);
-  scalaBcnObservable.subscribe(
+  private val topicObservable = TwitterConsumer.observable(System.getenv("TWITTER_TOPIC"), 50);
+  topicObservable.subscribe(
     (response) => {
       val status = response.statusCode
       if(status == 200) {

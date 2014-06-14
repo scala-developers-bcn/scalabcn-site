@@ -70,6 +70,8 @@ class MeetupsRsvpActor extends Actor {
  */
 class MeetupsActor extends Actor {
 
+  private val groupId = System.getenv("MEETUP_GROUP_ID");
+
   val rsvpActor = context.system.actorOf(Props(classOf[MeetupsRsvpActor]))
 
   override def receive: Receive = {
@@ -77,9 +79,8 @@ class MeetupsActor extends Actor {
 
       val broadcast = sender
 
-      // TODO group_id should be configurable.
       val f: Future[Response] = WS.url("http://api.meetup.com/2/events.json?status=past,upcoming" +
-        "&group_id=3505122" +
+        s"&group_id=$groupId" +
         "&time=-2m,2m" +
         s"&key=${MeetupsActor.key}").get()
 
