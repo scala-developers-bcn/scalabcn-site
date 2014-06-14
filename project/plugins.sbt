@@ -9,3 +9,5 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.2.2")
 
 //IDE
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.3.0")
+
+addSbtPlugin("com.orrsella" % "sbt-sublime" % "1.0.9")

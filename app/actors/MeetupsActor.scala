@@ -53,6 +53,7 @@ class MeetupsRsvpActor extends Actor {
         val count = (Json.parse(r.body)\"meta"\"count").toString().toInt
         val rsvp = RSVP(e, count)
         broadcast ! BroadcastActor.Publish(
+          "next-event",
           JsObject(List(("next-event", Json.toJson(rsvp))))
         )
       }
@@ -93,6 +94,7 @@ class MeetupsActor extends Actor {
         }.partition(_.time < tomorrow)
 
         broadcast ! BroadcastActor.Publish(
+          "last-event",
           JsObject(List(("last-event", Json.toJson(past.head))))
         )
         rsvpActor.tell(MeetupsActor.RequestRSVP(future.reverse.head), broadcast)

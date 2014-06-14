@@ -12,8 +12,6 @@ import actors.{TwitterConsumerActor, BroadcastActor}
 object Application extends Controller {
   def index = Action {
     implicit request =>
-      // causing a refresh on every 'index' hit is not a very good idea. Needs review.
-      broadcastActor ! BroadcastActor.Refresh
       Ok(views.html.index())
   }
 
@@ -23,16 +21,17 @@ object Application extends Controller {
   // would only know of the broadcast and data/APIs should all be hidden behind Broadcast Facade.
   val twitterConsumerActor = Akka.system.actorOf(Props(classOf[TwitterConsumerActor], broadcastActor))
 
+  val broadcast: (Enumerator[String], Concurrent.Channel[String]) = Concurrent.broadcast[String]
+  broadcastActor ! BroadcastActor.Subscribe(broadcast._2)
+  val logger = Iteratee.foreach[String](m => println(s"broadcast: ${m.substring(0,10)}..."))
+  broadcast._1 |>>> logger
 
   def ws = WebSocket.using[String] { request =>
-
-    val broadcast: (Enumerator[String], Concurrent.Channel[String]) = Concurrent.broadcast[String]
-    broadcastActor ! BroadcastActor.Subscribe(broadcast._2)
-
     val out = broadcast._1
     val in = Iteratee.foreach[String](println).map { _ =>
-      println("Disconnected")
+      println("WebSocket client has disconnected")
     }
+    broadcastActor ! BroadcastActor.ClientConnection
     (in, out)
   }
 }

@@ -31,3 +31,6 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+
+# Sublime specific
+*.sublime-project

@@ -1,26 +1,26 @@
 package consumers
 
 import rx.lang.scala._
-import play.api.libs.json._
 import rx.lang.scala.schedulers._
-import scala.concurrent.duration.Duration
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.duration.DurationLong
+
+import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.language.implicitConversions
+
+import scala.util.Success
+import scala.util.Failure
+import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import play.api.libs.json._
+import play.api.libs.json.JsObject
+import play.api.libs.json.JsString
+
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.commons.io.IOUtils
 import org.apache.http.params.HttpParams
-import scala.concurrent.{Future, ExecutionContext}
-import rx.lang.scala.subjects.ReplaySubject
-import scala.util.Success
-import scala.util.Failure
-import scala.concurrent.{Future, ExecutionContext}
-import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
 
 case class QueryTopicResponse(topic: String, statusCode: Int, content: String)
 
@@ -35,7 +35,6 @@ class TwitterConsumer {
   private val httpClient = new DefaultHttpClient();
 
   def queryTopic(topic: String, amount: Int) = {
-    println(s"queryTopic $topic $amount")
     val request = new HttpGet(s"https://api.twitter.com/1.1/search/tweets.json?q=$topic&count=$amount");
     consumer.sign(request);
     val response = httpClient.execute(request);
@@ -87,14 +86,5 @@ object TwitterConsumer {
           
         case _ => (JsObject(Nil), JsObject(Nil))
       }
-  }
-
-  /**
-   * helper main method to quickly test the consumer. This should be moved to test/ folder.
-   * @param args
-   */
-  def main(args: Array[String]): Unit = {
-    val consumer = new TwitterConsumer();
-    println(consumer.queryTopic("scalabcn", 50).content);
   }
 }
